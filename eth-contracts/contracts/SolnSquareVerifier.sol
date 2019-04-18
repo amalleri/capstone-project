@@ -3,8 +3,12 @@ pragma solidity >=0.4.21 <0.6.0;
 import './ERC721Mintable.sol';
 import './Verifier.sol';
 
+import "../../node_modules/openzeppelin-solidity/contracts/math/SafeMath.sol";
+
 // TODO define another contract named SolnSquareVerifier that inherits from your ERC721Mintable class
 contract SolnSquareVerifier is AjToken{
+    using SafeMath for uint256;
+    
     // define a solutions struct that can hold an index & an address - Done
     struct Solution {
         uint256 index;
@@ -15,24 +19,24 @@ contract SolnSquareVerifier is AjToken{
     // TODO define a mapping to store unique solutions submitted
     mapping(bytes32 => Solution) private solutionMapping;
     // TODO Create an event to emit when a solution is added
-    event SolutionAdded(address owner, uint256 index);
+    event SolutionAdded(address indexed owner, uint256 indexed index);
     
     // TODO define a contract call to the zokrates generated solidity contract <Verifier> or <renamedVerifier>
     Verifier public verifier;
 
-    constructor(address verifierAddress) public {
-        verifier = Verifier(verifierAddress);
+    constructor(address _verifierAddress) public {
+        verifier = Verifier(_verifierAddress);
     }
 
     // TODO Create a function to add the solutions to the array and emit the event
-    function addSolution(bytes32 key, uint256 index, address Address) public{
+    function addSolution(bytes32 _key, uint256 _index, address _Address) public{
         
-        require(solutionMapping[key].Address == address(0), "Key already exists");
-        Solution memory solution = Solution({index: index, Address: Address});
+        require(solutionMapping[_key].Address == address(0), "Key already exists");
+        Solution memory solution = Solution({index: _index, Address: _Address});
         solutions.push(solution);
-        solutionMapping[key] = solution;
+        solutionMapping[_key] = solution;
         
-        emit SolutionAdded(Address, index);
+        emit SolutionAdded(_Address, _index);
     }
 
     // TODO Create a function to mint new NFT only after the solution has been verified

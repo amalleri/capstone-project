@@ -1,0 +1,12 @@
+# NPM packages folder
+node_modules
+
+# DS store files
+.DS_Store
+eth-contracts/.DS_Store
+
+#lock files
+package-lock.json
+
+#Build folder
+build/
