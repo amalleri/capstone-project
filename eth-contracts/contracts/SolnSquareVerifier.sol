@@ -1,9 +1,24 @@
 pragma solidity >=0.4.21 <0.6.0;
 
 import './ERC721Mintable.sol';
-import './Verifier.sol';
 
 import "../../node_modules/openzeppelin-solidity/contracts/math/SafeMath.sol";
+
+// TODO define a contract call to the zokrates generated solidity contract <Verifier> or <renamedVerifier>
+// create interface which will help in calling the verifyTx function in the parent contract
+contract Verifier {
+    function verifyTx(
+        uint[2] memory,
+        uint[2] memory,
+        uint[2][2] memory,
+        uint[2] memory,
+        uint[2] memory,
+        uint[2] memory,
+        uint[2] memory,
+        uint[2] memory,
+        uint[2] memory
+    ) public returns (bool);
+}
 
 // TODO define another contract named SolnSquareVerifier that inherits from your ERC721Mintable class
 contract SolnSquareVerifier is AjToken{
@@ -21,11 +36,10 @@ contract SolnSquareVerifier is AjToken{
     // TODO Create an event to emit when a solution is added
     event SolutionAdded(address indexed owner, uint256 indexed index);
     
-    // TODO define a contract call to the zokrates generated solidity contract <Verifier> or <renamedVerifier>
-    Verifier public verifier;
+    Verifier verifierContract;
 
-    constructor(address _verifierAddress) public {
-        verifier = Verifier(_verifierAddress);
+    constructor(address _verifierAddress, string memory name, string memory symbol) AjToken(name, symbol) public {
+        verifierContract = Verifier(_verifierAddress);
     }
 
     // TODO Create a function to add the solutions to the array and emit the event
@@ -58,7 +72,7 @@ contract SolnSquareVerifier is AjToken{
         public
     {   
         //Verify the solution
-        require(verifier.verifyTx(a, a_p, b, b_p, c, c_p, h, k, input), "Unable to verify - Wrong proof");
+        require(verifierContract.verifyTx(a, a_p, b, b_p, c, c_p, h, k, input), "Unable to verify - Wrong proof");
 
         //hash the solution to get the key
         bytes32 key = keccak256(abi.encodePacked(a, a_p, b, b_p, c, c_p, h, k, input));
