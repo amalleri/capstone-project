@@ -86,7 +86,7 @@ Verified OpenSea with the SolnSquareVerifier tokens - List 10 properties using t
 
 ### Below screenshot shows the 10 properties listed in the Opensea platform.
 
-![Open Sea Listing Screenshot](/screenshots/OpenSea_Listing.png)
+![Open Sea Listing Screenshot](/screenshots/Opensea_listing.png)
 
 ### Below screenshot shows the 5 properties which were bought from account1 and transferred to account2
 
