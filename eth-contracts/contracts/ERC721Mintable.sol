@@ -7,33 +7,70 @@ import '../../node_modules/openzeppelin-solidity/contracts/token/ERC721/IERC721R
 import "./Oraclize.sol";
 
 contract Ownable {
-    //  TODO's
-    //  1) create a private '_owner' variable of type address with a public getter function
     address private _owner;
 
+    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
+
+    /**
+     * @dev The Ownable constructor sets the original `owner` of the contract to the sender
+     * account.
+     */
+    constructor () internal {
+        _owner = msg.sender;
+        emit OwnershipTransferred(address(0), _owner);
+    }
+
+    /**
+     * @return the address of the owner.
+     */
     function owner() public view returns (address) {
         return _owner;
     }
 
-    //  2) create an internal constructor that sets the _owner var to the creater of the contract 
-    constructor () internal{
-        _owner = msg.sender;
-    }
-    //  3) create an 'onlyOwner' modifier that throws if called by any account other than the owner.
+    /**
+     * @dev Throws if called by any account other than the owner.
+     */
     modifier onlyOwner() {
-        require(msg.sender == _owner, "Caller is not an owner!!");
+        require(isOwner());
         _;
     }
-    //  4) fill out the transferOwnership function
+
+    /**
+     * @return true if `msg.sender` is the owner of the contract.
+     */
+    function isOwner() public view returns (bool) {
+        return msg.sender == _owner;
+    }
+
+    /**
+     * @dev Allows the current owner to relinquish control of the contract.
+     * It will not be possible to call the functions with the `onlyOwner`
+     * modifier anymore.
+     * @notice Renouncing ownership will leave the contract without an owner,
+     * thereby removing any functionality that is only available to the owner.
+     */
+    function renounceOwnership() public onlyOwner {
+        emit OwnershipTransferred(_owner, address(0));
+        _owner = address(0);
+    }
+
+    /**
+     * @dev Allows the current owner to transfer control of the contract to a newOwner.
+     * @param newOwner The address to transfer ownership to.
+     */
     function transferOwnership(address newOwner) public onlyOwner {
-        // make sure the new owner is a real address
-        require(newOwner != address(0), "Owner is not a valid address");
+        _transferOwnership(newOwner);
+    }
+
+    /**
+     * @dev Transfers control of the contract to a newOwner.
+     * @param newOwner The address to transfer ownership to.
+     */
+    function _transferOwnership(address newOwner) internal {
+        require(newOwner != address(0));
         emit OwnershipTransferred(_owner, newOwner);
-        // TODO add functionality to transfer control of the contract to a newOwner.
         _owner = newOwner;
     }
-    //  5) create an event that emits anytime ownerShip is transfered (including in the constructor)
-    event OwnershipTransferred(address indexed prevOwner, address indexed newOwner);
 }
 
 //  TODO's: Create a Pausable contract that inherits from the Ownable contract
@@ -243,14 +280,14 @@ contract ERC721 is Pausable, ERC165 {
     function _mint(address to, uint256 tokenId) internal {
 
         // TODO revert if given tokenId already exists or given address is invalid
-        require(!_exists(tokenId), "TokenId already exists");
         require(to != address(0), "To address is invalid");
+        require(!_exists(tokenId), "TokenId already exists");
+        
         // TODO mint tokenId to given address & increase token count of owner
-        address from = _tokenOwner[tokenId];
         _tokenOwner[tokenId] = to;
         _ownedTokensCount[to].increment();
-        // TODO emit Transfer event
-        emit Transfer(from, to, tokenId);
+
+        emit Transfer(address(0), to, tokenId);
     }
 
     // @dev Internal function to transfer ownership of a given token ID to another address.
@@ -266,6 +303,8 @@ contract ERC721 is Pausable, ERC165 {
         // TODO: update token counts & transfer ownership of the token ID 
         _ownedTokensCount[from].decrement();
         _ownedTokensCount[to].increment();
+
+        _tokenOwner[tokenId] = to;
         // TODO: emit correct event
         emit Transfer(from, to, tokenId);
     }
@@ -499,15 +538,15 @@ contract ERC721Metadata is ERC721Enumerable, usingOraclize {
     }
 
     // TODO: create external getter functions for name, symbol, and baseTokenURI
-    function getName() external view returns (string memory) {
+    function name() external view returns (string memory) {
         return _name;
     }
 
-    function getSymbol() external view returns (string memory) {
+    function symbol() external view returns (string memory) {
         return _symbol;
     }
 
-    function getBaseTokenURI() external view returns (string memory) {
+    function baseTokenURI() external view returns (string memory) {
         return _baseTokenURI;
     }
 

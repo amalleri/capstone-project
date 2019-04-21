@@ -2,27 +2,8 @@ pragma solidity >=0.4.21 <0.6.0;
 
 import './ERC721Mintable.sol';
 
-import "../../node_modules/openzeppelin-solidity/contracts/math/SafeMath.sol";
-
-// TODO define a contract call to the zokrates generated solidity contract <Verifier> or <renamedVerifier>
-// create interface which will help in calling the verifyTx function in the parent contract
-contract Verifier {
-    function verifyTx(
-        uint[2] memory,
-        uint[2] memory,
-        uint[2][2] memory,
-        uint[2] memory,
-        uint[2] memory,
-        uint[2] memory,
-        uint[2] memory,
-        uint[2] memory,
-        uint[2] memory
-    ) public returns (bool);
-}
-
 // TODO define another contract named SolnSquareVerifier that inherits from your ERC721Mintable class
 contract SolnSquareVerifier is AjToken{
-    using SafeMath for uint256;
     
     // define a solutions struct that can hold an index & an address - Done
     struct Solution {
@@ -31,8 +12,10 @@ contract SolnSquareVerifier is AjToken{
     }
     // TODO define an array of the above struct
     Solution[] solutions;
+    
     // TODO define a mapping to store unique solutions submitted
     mapping(bytes32 => Solution) private solutionMapping;
+
     // TODO Create an event to emit when a solution is added
     event SolutionAdded(address indexed owner, uint256 indexed index);
     
@@ -82,4 +65,19 @@ contract SolnSquareVerifier is AjToken{
 
         super.mint(to, tokenId);
     }
+}
+
+// TODO define a contract call to the zokrates generated solidity contract <Verifier> or <renamedVerifier>
+contract Verifier {
+    function verifyTx(
+        uint[2] memory,
+        uint[2] memory,
+        uint[2][2] memory,
+        uint[2] memory,
+        uint[2] memory,
+        uint[2] memory,
+        uint[2] memory,
+        uint[2] memory,
+        uint[2] memory
+    ) public returns (bool);
 }

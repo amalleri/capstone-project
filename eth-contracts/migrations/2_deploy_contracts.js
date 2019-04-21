@@ -2,9 +2,9 @@
 var Verifier = artifacts.require("./Verifier.sol");
 var SolnSquareVerifier = artifacts.require("./SolnSquareVerifier.sol");
 
-module.exports = function (deployer, networks, accounts) {
+module.exports = function (deployer) {
   deployer.deploy(Verifier)
     .then(() => {
-      return deployer.deploy(SolnSquareVerifier, Verifier.address, "RealEstate-MintNewNFT", "AJT", { from: accounts[0] });
+      return deployer.deploy(SolnSquareVerifier, Verifier.address, "Aj Token", "AJT");
     });
 };
